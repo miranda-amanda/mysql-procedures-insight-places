@@ -1,3 +1,6 @@
+-- Final single-rental version:  Generates the next reservation ID automatically, validates the client (0, 1, or multiple matches),
+-- calculates the end date, computes total price, inserts the rental, and returns a success or error message. 
+-- Represents the fully refined version for inserting ONE rental at a time.
 
 USE `insight_places`;
 DROP procedure IF EXISTS `insight_places`.`novoAluguel_45`;
@@ -43,42 +46,13 @@ END$$
 DELIMITER ;
 ;
 
--- -----------------------------------------------------------------------------------------------
-
-
-USE `insight_places`;
-DROP procedure IF EXISTS `insight_places`.`looping_cursor_54`;
-;
-
-DELIMITER $$
-USE `insight_places`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `looping_cursor_54`()
-BEGIN
-	-- variavel que vai declarar o fim do cursor
-	DECLARE fimCursor INT DEFAULT 0;
-    -- variavel que vai receber o 'nome' que o cursor vai ler no FETCH 
-    DECLARE vnome VARCHAR(100);
-    -- declarando o cursor
-    DECLARE cursor1 CURSOR FOR SELECT nome FROM temps_nome;
-    -- excecao para o cursor mudar o valor para 1 quando chegar no fim 
-    DECLARE CONTINUE HANDLER FOR NOT FOUND SET fimCursor = 1;
-    -- abrindo cursor
-    OPEN cursor1;
-    FETCH cursor1 INTO vnome;
-    -- iniciando looping
-    WHILE fimCursor = 0 DO 
-        SELECT vnome;
-        FETCH cursor1 INTO vnome;
-	END WHILE;
-	CLOSE cursor1;
-END$$
-
-DELIMITER ;
-;
-
-
 
 -- ---------------------------------------------------------------------------------------------------
+-- Final multi-rental version:
+-- Accepts a comma-separated list of client names, loads them into a temporary table, loops through each name
+-- using a cursor, and calls novoAluguel_45 for every client.
+-- Automates batch rental creation by reusing the finalized logic of version 45.
+
 
 USE `insight_places`;
 DROP procedure IF EXISTS `insight_places`.`novosAlugueis_55`;
